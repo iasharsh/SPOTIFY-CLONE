@@ -59,20 +59,28 @@ body {
     height: 20px;
 }
 
-.library {
+/* .library {
     position: relative;
     min-height: 80vh;
+} */
+
+.library {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px); /* adjust if needed */
 }
 
+
 .footer {
-    position: absolute;
-    bottom: 0;
+    margin-top: auto;
     display: flex;
     gap: 13px;
     font-size: 10px;
     flex-wrap: wrap;
-    padding: 10px 0;
+    padding: 25px 0;
+    padding-left: 5px;
 }
+
 
 .footer a {
     text-decoration: none;
@@ -445,19 +453,43 @@ body {
 
 /* bottom text */
 .footerbottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #292929;
+    padding-top: 20px;
+    margin-top: 30px;
     font-size: 13px;
     color: #b3b3b3;
+    flex-wrap: wrap;
+    gap: 10px;
 }
+
+.footerbottom .links {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.footerbottom .links a {
+    color: #b3b3b3;
+    text-decoration: none;
+}
+
+.footerbottom .links a:hover {
+    color: white;
+}
+
 
 
 
 
 @media (max-width: 1200px) {
     .left {
-        position: absolute;
+        position: fixed;
         left: -120%;
         transition: all 0.3s;
-        z-index: 1;
+        z-index: 1000;
         width: 370px;
         background-color: black;
         padding: 0;
@@ -466,6 +498,7 @@ body {
 
     .left .close {
         position: absolute;
+        cursor: pointer;
         display: block;
         right: 30px;
         top: 25px;
@@ -524,10 +557,11 @@ body {
     .cardContainer {
         margin: 0;
         justify-content: center;
-        max-height: 80vh;
+        max-height: 70vh;
     }
     .spotifyfooter {
         padding-bottom: 220px; /* footer fully visible above playbar */
+        padding-top: 55px;
     }
 
     /* .circle{
@@ -535,6 +569,7 @@ body {
         top: -33px;
         opacity: 1;
     } */
+
     .play {
         top: auto !important;
         bottom: 100px;
