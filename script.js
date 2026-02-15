@@ -9,6 +9,71 @@ let currfolder = "";
 let sections = [];
 let currentSectionIndex = 0;
 
+let leftArrow;
+let rightArrow;
+
+let allSongsIndex = [];
+// [{ name, folder }]
+
+
+
+// search songs
+const searchBtn = document.getElementById("searchBtn");
+const searchInput = document.getElementById("searchInput");
+
+searchBtn.addEventListener("click", () => {
+    searchInput.classList.remove("hidden");
+    searchInput.focus();
+});
+
+const cardsContainer = document.querySelector(".cardContainer");
+const libraryList = document.querySelector(".songlist ul")
+
+searchInput.addEventListener("input", () => {
+    const value = searchInput.value.toLowerCase();
+
+    /* ===== FILTER ALBUM CARDS ===== */
+    const cards = cardsContainer.querySelectorAll(".card");
+
+    cards.forEach(card => {
+        const title = card.querySelector("h2")?.innerText.toLowerCase() || "";
+        const desc = card.querySelector("p")?.innerText.toLowerCase() || "";
+        card.style.display =
+            title.includes(value) || desc.includes(value)
+                ? "block"
+                : "none";
+    });
+
+    /* ===== LOAD SONGS INTO LIBRARY ===== */
+    if(value.trim() == "") return;
+
+    const matches = allSongsIndex.filter(song =>
+        cleanSongName(song.name).toLowerCase().includes(value)
+    );
+
+    libraryList.innerHTML = "";
+
+    matches.forEach(song => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+         <img class="invert" src="img/music.svg">
+        <div class="info">
+            <div>${cleanSongName(song.name)}</div>
+            <div>${song.folder}</div>
+        </div>
+        <div class="playnow">
+            <span>Play now</span>
+            <img class="invert" src="img/play.svg">
+        </div>`;
+
+        li.addEventListener("click", () =>{
+            currfolder = song.folder;
+            playMusic(song.name);
+        });
+
+        libraryList.appendChild(li);
+    });
+});
 
 /* ================= ELEMENTS ================= */
 const play = document.getElementById("play");
@@ -49,7 +114,7 @@ async function getSongs(folder) {
 
     songs.forEach(song => {
         songUl.innerHTML += `
-        <li data-song="${song}">
+        <li class="songItem" data-song="${song}">
             <img class="invert" src="img/music.svg">
             <div class="info">
                 <div>${cleanSongName(song)}</div>
@@ -141,6 +206,9 @@ seekbar.addEventListener("click", e => {
 });
 
 function activatePlayerUI() {
+    // show library
+    document.querySelector(".library").classList.add("active");
+
     // show playbar
     document.querySelector(".playbar").classList.add("active");
 
@@ -199,7 +267,45 @@ async function loadSections() {
     const res = await fetch("songs/sections.json");
     const data = await res.json();
     sections = data.sections;
-}
+
+    allSongsIndex = [];
+
+    for (const section of sections) {
+        for (const folder of section.folders) {
+            const songRes = await fetch(`songs/${folder}/songs.json`);
+            const songData = await songRes.json();
+
+            songData.songs.forEach(song => {
+                allSongsIndex.push({
+                    name: song,
+                    folder: folder
+                });
+            });
+        };
+    };
+};
+
+
+const homeBtn = document.getElementById("homeBtn");
+
+homeBtn.addEventListener("click", () => {
+    /* 1️⃣ Reset search */
+    searchInput.value = "";
+    searchInput.classList.add("hidden");
+
+    /* 2️⃣ Clear library search results */
+    libraryList.innerHTML = "";
+
+    /* 3️⃣ Reset section */
+    currentSectionIndex = 0;
+    renderCurrentSection();
+
+    /* 4️⃣ Show all cards (safety reset) */
+    document.querySelectorAll(".card").forEach(card => {
+        card.style.display = "block";
+    });
+});
+
 
 // changing of sections
 async function renderCurrentSection() {
@@ -315,8 +421,9 @@ async function main() {
 
     // arrows functionality
     const arrows = document.querySelectorAll(".arrow");
-    const leftArrow = arrows[0];
-    const rightArrow = arrows[1];
+    leftArrow = arrows[0];
+    rightArrow = arrows[1];
+
 
     leftArrow.addEventListener("click", () => {
         if (currentSectionIndex > 0) {

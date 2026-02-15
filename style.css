@@ -22,7 +22,8 @@ body {
 .right {
     width: 75vw;
     height: 100vh;
-    overflow-y: auto;     /* ONLY right scrolls */
+    overflow-y: auto;
+    /* ONLY right scrolls */
     /* position: relative; */
 }
 
@@ -42,6 +43,34 @@ body {
     font-weight: bold;
     cursor: pointer;
 }
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.searchBox {
+    flex: 1;
+}
+
+.searchInput {
+    width: 100%;
+    max-width: 318px;
+    padding: 13px 16px;
+    margin-top: 10px;
+    border-radius: 999px;
+    background: #2a2a2a;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 14px;
+}
+
+.hidden {
+    display: none;
+}
+
 
 .heading {
     display: flex;
@@ -67,7 +96,8 @@ body {
 .library {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 120px); /* adjust if needed */
+    height: calc(100vh - 120px);
+    /* adjust if needed */
 }
 
 
@@ -94,12 +124,12 @@ body {
     position: relative;
 }
 
-.logo{
+.logo {
     display: flex;
     align-items: center;
 }
 
-.arrow{
+.arrow {
     cursor: pointer;
 }
 
@@ -130,7 +160,7 @@ body {
     overflow-y: auto;
     scroll-behavior: smooth;
     /* height: calc(100vh - 340px);  */
-    height: calc(100vh - 260px); 
+    height: calc(100vh - 260px);
     max-height: 70vh;
     /* Add this for custom scrollbar */
     scrollbar-width: thin;
@@ -164,9 +194,10 @@ body {
 .card img {
     width: 100%;
     aspect-ratio: 1 / 1;
-    object-fit: cover;   /* ⚠️ slight crop */
+    object-fit: cover;
+    /* ⚠️ slight crop */
     border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
     display: block;
 }
 
@@ -185,7 +216,7 @@ body {
     transition: all 0.5s ease-out;
 }
 
-.card:hover{
+.card:hover {
     background-color: #4b4949b4;
 }
 
@@ -393,7 +424,8 @@ body {
     background: #121212;
     color: #b3b3b3;
     margin-top: 60px;
-    padding: 40px 30px 120px; /* bottom space for playbar */
+    padding: 40px 30px 120px;
+    /* bottom space for playbar */
     font-size: 14px;
 }
 
@@ -559,8 +591,10 @@ body {
         justify-content: center;
         max-height: 70vh;
     }
+
     .spotifyfooter {
-        padding-bottom: 220px; /* footer fully visible above playbar */
+        padding-bottom: 220px;
+        /* footer fully visible above playbar */
         padding-top: 55px;
     }
 
