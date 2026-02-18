@@ -512,9 +512,226 @@ body {
     color: white;
 }
 
+/* =========================
+   AUTH MODAL OVERLAY
+========================= */
+.auth-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.auth-modal.hidden {
+  display: none;
+}
+
+/* =========================
+   AUTH BOX
+========================= */
+.auth-box {
+  background: #121212;
+  width: 360px;
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  color: #fff;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* =========================
+   HEADER
+========================= */
+.authHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.authHeader h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.close-auth {
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.7;
+}
+
+.close-auth:hover {
+  opacity: 1;
+}
+
+/* =========================
+   FORM FIELDS
+========================= */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.field label {
+  font-size: 13px;
+  color: #b3b3b3;
+}
+
+/* input */
+.field input {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #1e1e1e;
+  color: #fff;
+  font-size: 14px;
+  box-sizing: border-box;
+}
 
 
+.field input::placeholder {
+  color: #777;
+}
 
+.field input:focus {
+  border-color: #1db954;
+}
+
+.email-error {
+  display: none;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #ffb300;
+}
+
+.field.error-active .email-error {
+  display: block;
+}
+
+
+/* input wrap password */
+.input-wrap {
+  position: relative;
+  width: 100%;
+}
+.input-wrap input {
+  height: 42px;
+}
+
+.tooltip {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+
+  max-width: 100%;
+  background: #121212;
+  color: #fbbf24; /* warm yellow */
+  font-size: 12px;
+  line-height: 1.4;
+
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  border: 1px solid #2a2a2a;
+
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 50;
+}
+
+/* arrow */
+.tooltip::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 16px;
+
+  width: 10px;
+  height: 10px;
+  background: #121212;
+  border-left: 1px solid #2a2a2a;
+  border-top: 1px solid #2a2a2a;
+
+  transform: rotate(45deg);
+}
+
+/* show tooltip */
+.field.show-tooltip .tooltip {
+  opacity: 1;
+  transform: translateY();
+}
+
+/* Red border on error */
+.field.error-active input {
+  border-color: #e53935;
+}
+
+/* submit  */
+#authSubmit {
+  width: 100%;
+  padding: 11px;
+  margin-top: 10px;
+  border-radius: 999px;
+  border: none;
+  background: #1db954;
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#authSubmit:hover {
+  background: #1ed760;
+}
+
+/* switch text */
+.switch {
+  margin-top: 16px;
+  font-size: 13px;
+  text-align: center;
+  color: #b3b3b3;
+}
+
+#switchAuth {
+  color: #1db954;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+#switchAuth:hover {
+  text-decoration: underline;
+}
+
+.form-error {
+  color: #ff4d4d;
+  font-size: 14px;
+  margin: 8px 0 12px;
+  text-align: left;
+}
 
 @media (max-width: 1200px) {
     .left {

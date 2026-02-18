@@ -1,6 +1,12 @@
 console.log("Welcome to Spotify Clone");
 
 /* ================= GLOBALS ================= */
+let users = JSON.parse(localStorage.getItem("users")) || [
+    { email: "test@gmail.com", password: "Abc@123" }
+];
+
+let currentMode = "login"; // or signup
+
 let currentSong = new Audio();
 let currentSongName = "";
 let songs = [];
@@ -15,16 +21,206 @@ let rightArrow;
 let allSongsIndex = [];
 // [{ name, folder }]
 
+const authModal = document.getElementById("authModal");
+const loginBtn = document.querySelector(".logInbtn");
+const signupBtn = document.querySelector(".signUpbtn");
+const closeAuth = document.getElementById("closeAuth");
 
+const authTitle = document.getElementById("authTitle");
+const authSubmit = document.getElementById("authSubmit");
+const switchAuth = document.getElementById("switchAuth");
+const switchText = document.getElementById("switchText");
+
+const email = document.getElementById("authEmail");
+const password = document.getElementById("authPassword");
+const authMessage = document.getElementById("authMessage");
+
+const passwordError = document.getElementById("passwordError");
+const authError = document.getElementById("authError");
+
+let isLoggedIn = false; // user is NOT logged in by default
 
 // search songs
 const searchBtn = document.getElementById("searchBtn");
 const searchInput = document.getElementById("searchInput");
 
-searchBtn.addEventListener("click", () => {
-    searchInput.classList.remove("hidden");
-    searchInput.focus();
+// Open Login
+loginBtn.onclick = () => openAuth("login");
+signupBtn.onclick = () => openAuth("signup");
+
+// Close
+closeAuth.onclick = () => authModal.classList.add("hidden");
+
+// Switch Login / Signup
+switchAuth.onclick = () => {
+    openAuth(currentMode === "login" ? "signup" : "login");
+};
+
+if (authMessage) {
+    authMessage.textContent = "";
+}
+
+function requireLogin(action) {
+    if (!isLoggedIn) {
+        openAuth("login");
+        return;
+    }
+    action();
+}
+
+function resetAuthForm() {
+    email.value = "";
+    password.value = "";
+    authMessage.textContent = "";
+
+    email.closest(".field").classList.remove("error-active");
+    password.closest(".field").classList.remove("error-active");
+}
+
+
+
+function openAuth(type) {
+  authModal.classList.remove("hidden");
+
+  currentMode = type;
+
+  /* 🔥 CLEAR EVERYTHING WHEN SWITCHING */
+  authError.textContent = "";
+  authError.classList.add("hidden");
+
+  email.value = "";
+  password.value = "";
+
+  email.closest(".field").classList.remove("error-active");
+  password.closest(".field").classList.remove("error-active", "show-tooltip");
+
+  if (type === "login") {
+    authTitle.innerText = "Log In";
+    authSubmit.innerText = "Log In";
+    switchText.innerText = "Don’t have an account?";
+    switchAuth.innerText = "Sign Up";
+  } else {
+    authTitle.innerText = "Sign Up";
+    authSubmit.innerText = "Sign Up";
+    switchText.innerText = "Already have an account?";
+    switchAuth.innerText = "Log In";
+  }
+
+  setTimeout(() => email.focus(), 100);
+}
+
+
+
+
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function isValidPassword(password) {
+    return /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/.test(password);
+}
+
+// Validation
+authSubmit.addEventListener("click", () => {
+  const emailVal = email.value.trim();
+  const passVal = password.value.trim();
+
+  const emailField = email.closest(".field");
+  const passField = password.closest(".field");
+
+  // RESET
+  emailField.classList.remove("error-active");
+  passField.classList.remove("error-active", "show-tooltip");
+  authError.textContent = "";
+  authError.classList.add("hidden");
+
+  /* EMAIL */
+  if (!isValidEmail(emailVal)) {
+    emailField.classList.add("error-active");
+    return;
+  }
+
+  const user = users.find(u => u.email === emailVal);
+
+  /* ================= LOGIN ================= */
+  if (currentMode === "login") {
+
+    if (!user) {
+      authError.textContent = "No account exists with this email.";
+      authError.classList.remove("hidden");
+      return; 
+    }
+
+    if (user.password !== passVal) {
+      passField.classList.add("error-active");
+      authError.textContent = "Wrong password. Please try again.";
+      authError.classList.remove("hidden");
+      return;
+    }
+
+    // SUCCESS
+    isLoggedIn = true;
+    authModal.classList.add("hidden");
+    return;
+  }
+
+  /* ================= SIGN UP ================= */
+  if (currentMode === "signup") {
+
+    if (user) {
+      authError.textContent = "Account already exists. Please log in.";
+      authError.classList.remove("hidden");
+      return;
+    }
+
+    if (!isValidPassword(passVal)) {
+      passField.classList.add("error-active", "show-tooltip");
+      return;
+    }
+
+    users.push({ email: emailVal, password: passVal });
+    localStorage.setItem("users", JSON.stringify(users));
+
+    openAuth("login");
+  }
 });
+
+
+
+authPassword.addEventListener("input", () => {
+    const field = authPassword.closest(".field");
+
+    // ✅ remove tooltip immediately when user types
+    field.classList.remove("show-tooltip");
+});
+
+[email, password].forEach(input => {
+  input.addEventListener("input", () => {
+    input.closest(".field").classList.remove("error-active", "show-tooltip");
+    authError.classList.add("hidden");
+    authError.textContent = "";
+  });
+});
+
+
+
+
+passwordError.classList.add("hidden");
+
+function showAuthMessage(msg, success = false) {
+    authMessage.textContent = msg;
+    authMessage.style.color = success ? "#1db954" : "#e91429";
+}
+
+
+
+searchBtn.addEventListener("click", () => {
+    requireLogin(() => {
+        searchInput.classList.remove("hidden");
+        searchInput.focus();
+    });
+});
+
 
 const cardsContainer = document.querySelector(".cardContainer");
 const libraryList = document.querySelector(".songlist ul")
@@ -45,7 +241,7 @@ searchInput.addEventListener("input", () => {
     });
 
     /* ===== LOAD SONGS INTO LIBRARY ===== */
-    if(value.trim() == "") return;
+    if (value.trim() == "") return;
 
     const matches = allSongsIndex.filter(song =>
         cleanSongName(song.name).toLowerCase().includes(value)
@@ -66,7 +262,7 @@ searchInput.addEventListener("input", () => {
             <img class="invert" src="img/play.svg">
         </div>`;
 
-        li.addEventListener("click", () =>{
+        li.addEventListener("click", () => {
             currfolder = song.folder;
             playMusic(song.name);
         });
@@ -247,10 +443,13 @@ async function displayAlbums() {
     }
 
     document.querySelectorAll(".card").forEach(card => {
-        card.addEventListener("click", async () => {
-            const songs = await getSongs(card.dataset.folder);
-            playMusic(songs[0]);
+        card.addEventListener("click", () => {
+            requireLogin(async () => {
+                const songs = await getSongs(card.dataset.folder);
+                playMusic(songs[0]);
+            });
         });
+
     });
 }
 
@@ -336,10 +535,13 @@ async function renderCurrentSection() {
     }
 
     document.querySelectorAll(".card").forEach(card => {
-        card.addEventListener("click", async () => {
-            const songs = await getSongs(card.dataset.folder);
-            playMusic(songs[0]);
+        card.addEventListener("click", () => {
+            requireLogin(async () => {
+                const songs = await getSongs(card.dataset.folder);
+                playMusic(songs[0]);
+            });
         });
+
     });
 
     updateArrowState();
@@ -356,14 +558,17 @@ async function main() {
 
 
     play.addEventListener("click", () => {
-        if (currentSong.paused) {
-            currentSong.play();
-            play.src = "img/pause.svg";
-        } else {
-            currentSong.pause();
-            play.src = "img/play.svg";
-        }
+        requireLogin(() => {
+            if (currentSong.paused) {
+                currentSong.play();
+                play.src = "img/pause.svg";
+            } else {
+                currentSong.pause();
+                play.src = "img/play.svg";
+            }
+        });
     });
+
 
     currentSong.addEventListener("timeupdate", () => {
         document.querySelector(".songtime").innerText =
@@ -438,7 +643,6 @@ async function main() {
             renderCurrentSection();
         }
     });
-
 }
 
 main();
